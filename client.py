@@ -27,22 +27,30 @@ def add_todo():
 
     title = request.form.get('title')
     details = request.form.get('details')
+    time = request.form.get('deadline')
+
+    # deadline = Timestamp()
+    # deadline.GetCurrentTime()
+
+    date_time_str = time
+    date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
 
     deadline = Timestamp()
-    deadline.GetCurrentTime()
+    deadline.FromDatetime(date_time_obj)
 
-    todo = todo_pb2.AddTodoRequest(title=title, details = details, deadline=deadline)
-    response = stub.AddTodo(todo)
+    
+    add_todo_request = todo_pb2.AddTodoRequest(title=title, details = details, deadline=deadline)
+    response = stub.AddTodo(add_todo_request)
 
     return MessageToJson(response)
 
 
 @app.route('/deletetodo', methods=['POST'])
 def delete_todo():
-    uuid = request.form.get('uuid')
+    id = request.form.get('id')
 
-    inp = todo_pb2.DeleteTodoRequest(uuid=uuid)
-    response = stub.DeleteTodo(inp)
+    delete_todo_request = todo_pb2.DeleteTodoRequest(uuid=id)
+    response = stub.DeleteTodo(delete_todo_request)
 
     return MessageToJson(response)
 
@@ -50,8 +58,8 @@ def delete_todo():
 
 @app.route('/gettodos', methods=['GET'])
 def get_todos():
-    todos = todo_pb2.GetTodosRequest()
-    response = stub.GetTodos(todos)
+    get_todos_request = todo_pb2.GetTodosRequest()
+    response = stub.GetTodos(get_todos_request)
 
     return MessageToJson(response)
 
